@@ -12,6 +12,10 @@
 #include "DRV8834.h"
 #include "A4988.h"
 #include "DRV8825.h"
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+  #include <avr/power.h>
+#endif
 
 #include <stdio.h>
 
@@ -55,6 +59,19 @@
 // Button input
 #define btn1    A4
 
+// Neo Pixel
+
+#define PIN 6
+
+// Parameter 1 = number of pixels in strip
+// Parameter 2 = pin number (most are valid)
+// Parameter 3 = pixel type flags, add together as needed:
+//   NEO_KHZ800  800 KHz bitstream (most NeoPixel products w/WS2812 LEDs)
+//   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
+//   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
+//   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, PIN, NEO_GRB + NEO_KHZ800);
+
 /*****************************************************************************/
 // Global Vars
 int   s1A;
@@ -79,11 +96,26 @@ void setup() {
     pinMode(pin2A, INPUT);
     pinMode(pin2B, INPUT);
 
-    pinMode(btn1, INPUT);
+    pinMode(btn1, INPUT_PULLUP);
+
+    strip.begin();
+    strip.show(); // Initialize all pixels to 'off'
+    strip.setPixelColor(0, 255, 0, 0);
+    strip.show();
+    delay(100);
+    strip.setPixelColor(0, 0, 255, 0);
+    strip.show();
+    delay(100);
+    strip.setPixelColor(0, 0, 0, 255);
+    strip.show();
+    delay(100);
+    strip.setPixelColor(0, 64, 0, 0);
+    strip.show();
 
     // setup serial port
     Serial.begin(115200);
-    Serial.print("Welcome to the stepper tester! :D");
+    Serial.println("Welcome to the stepper tester! :D");
+    Serial.println();
 
     /*
      * Set target motor RPM.
@@ -92,13 +124,20 @@ void setup() {
      */
     stepper.begin(120);
     stepper.setMicrostep(1); // make sure we are in full speed mode
+    stepper.disable();
 }
 
 void loop() {
-    delay(1000);
+    Serial.println("Ready for Testing!");
+    Serial.println("Press button or send 's' to start test...");
+
+    while((digitalRead(btn1)) && (Serial.available() == 0)){
+      // do nothing / twiddle thumbs!
+    }
 
     // Tests that we want to run:
     // 1 disable driver and check outputs low
+    Serial.println("*********************************************");
     Serial.println("Test 1: Disabling driver and checking outputs");
     stepper.disable();
     delay(10); // wait a bit for outputs to settle
@@ -114,39 +153,39 @@ void loop() {
       Serial.println();
     }
 
-    delay(100);
-
     // 2 enable and check output works, see what state we are in?
+    Serial.println("*********************************************");
     Serial.println("Test 2: Enabling driver and checking outputs");
     stepper.enable();
+    stepper.setMicrostep(1); // make sure we are in full speed / step mode
     delay(10); // wait a bit for outputs to settle
 
-    delay(1000);
+    //delay(1000);
     checkDriverOutputs(); //0
     printDriverOStates();
 
     stepper.move(1);
-    delay(1000);
+    //delay(1000);
     checkDriverOutputs(); //1
     printDriverOStates();
 
     stepper.move(1);
-    delay(1000);
+    //delay(1000);
     checkDriverOutputs(); //2
     printDriverOStates();
 
     stepper.move(1);
-    delay(1000);
+    //delay(1000);
     checkDriverOutputs(); //3
     printDriverOStates();
 
     stepper.move(1);
-    delay(1000);
+    //delay(1000);
     checkDriverOutputs(); //0
     printDriverOStates();
 
     stepper.move(1);
-    delay(1000);
+    //delay(1000);
     checkDriverOutputs(); //1
     printDriverOStates();
 
@@ -184,6 +223,7 @@ void loop() {
     delay(100);
 
     // 3 step 4 times CW and check states
+    Serial.println("*********************************************");
     Serial.println("Test 3: Do 4 full rotations");
     for(int l = 0 ; l<4 ; l++){
       stepper.rotate(360);
@@ -197,6 +237,7 @@ void loop() {
 
 
     // 4 repeat for 2, 4, 8, 16 MS
+    Serial.println("*********************************************");
     Serial.println("Test 4: Change MS 2,4,8,16 and rotate");
     Serial.println("Test 4: 2 MicroSteps...");
     stepper.setMicrostep(2);
@@ -236,8 +277,15 @@ void loop() {
     // 7 disable, check states, try step
 
     Serial.println("Tests Complete! ");
+    Serial.println("*********************************************");
+    Serial.println("*********************************************");
+    Serial.println();
+    Serial.println();
+    Serial.println();
+
     stepper.disable();
-    delay(1000);
+    Serial.read();
+    Serial.flush();
 
 }
 
