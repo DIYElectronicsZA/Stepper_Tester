@@ -57,7 +57,7 @@
 #define pin2B   A3
 
 // Button input
-#define btn1    A4
+#define btn1    10
 
 // Neo Pixel
 
@@ -72,14 +72,14 @@
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, PIN, NEO_GRB + NEO_KHZ800);
 // Color definitions
-#define	BLACK           0x0000
-#define	BLUE            0x001F
-#define	RED             0xF800
-#define	GREEN           0x07E0
-#define CYAN            0x07FF
-#define MAGENTA         0xF81F
-#define YELLOW          0xFFE0
-#define WHITE           0xFFFF
+uint32_t	BLACK;
+uint32_t	BLUE;
+uint32_t	RED;
+uint32_t	GREEN;
+uint32_t  CYAN;
+uint32_t  MAGENTA;
+uint32_t  YELLOW;
+uint32_t  WHITE;
 
 /*****************************************************************************/
 // Global Vars
@@ -106,6 +106,16 @@ void setup() {
     pinMode(pin2B, INPUT);
 
     pinMode(btn1, INPUT_PULLUP);
+
+    BLACK       = strip.Color(0,0,0);
+    BLUE        = strip.Color(0,0,255);
+    RED         = strip.Color(255,0,0);
+    GREEN       = strip.Color(0,255,0);
+    CYAN        = strip.Color(0,255,255);
+    MAGENTA     = strip.Color(255,0,255);
+    YELLOW      = strip.Color(255,255,0);
+    WHITE       = strip.Color(255,255,255);
+
 
     strip.begin();
     strip.show(); // Initialize all pixels to 'off'
