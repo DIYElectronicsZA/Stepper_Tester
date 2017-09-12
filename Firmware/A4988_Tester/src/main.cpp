@@ -180,6 +180,12 @@ void loop() {
       Serial.println();
     }
 
+    strip.setPixelColor(0, MAGENTA);
+    strip.show();
+    delay(100);
+    strip.setPixelColor(0, BLUE);
+    strip.show();
+
     // 2 enable and check output works, see what state we are in?
     Serial.println("*********************************************");
     Serial.println("Test 2: Enabling driver and checking outputs");
@@ -216,6 +222,12 @@ void loop() {
     checkDriverOutputs(); //1
     printDriverOStates();
 
+    strip.setPixelColor(0, MAGENTA);
+    strip.show();
+    delay(100);
+    strip.setPixelColor(0, BLUE);
+    strip.show();
+
     Serial.println("Test 2: Now checking reverse");
 
     stepper.move(-1);
@@ -247,7 +259,11 @@ void loop() {
     Serial.println("Test 2: Complete");
     Serial.println();
 
+    strip.setPixelColor(0, MAGENTA);
+    strip.show();
     delay(100);
+    strip.setPixelColor(0, BLUE);
+    strip.show();
 
     // 3 step 4 times CW and check states
     Serial.println("*********************************************");
@@ -260,7 +276,11 @@ void loop() {
     Serial.println("Test 3: Complete");
     Serial.println();
 
+    strip.setPixelColor(0, MAGENTA);
+    strip.show();
     delay(100);
+    strip.setPixelColor(0, BLUE);
+    strip.show();
 
 
     // 4 repeat for 2, 4, 8, 16 MS
@@ -273,6 +293,12 @@ void loop() {
       stepper.rotate(-360);
     }
 
+    strip.setPixelColor(0, MAGENTA);
+    strip.show();
+    delay(100);
+    strip.setPixelColor(0, BLUE);
+    strip.show();
+
     Serial.println("Test 4: 4 MicroSteps...");
     stepper.setMicrostep(4);
     for(int l = 0 ; l<4 ; l++){
@@ -280,12 +306,24 @@ void loop() {
       stepper.rotate(-360);
     }
 
+    strip.setPixelColor(0, MAGENTA);
+    strip.show();
+    delay(100);
+    strip.setPixelColor(0, BLUE);
+    strip.show();
+
     Serial.println("Test 4: 8 MicroSteps...");
     stepper.setMicrostep(8);
     for(int l = 0 ; l<4 ; l++){
       stepper.rotate(360);
       stepper.rotate(-360);
     }
+
+    strip.setPixelColor(0, MAGENTA);
+    strip.show();
+    delay(100);
+    strip.setPixelColor(0, BLUE);
+    strip.show();
 
     Serial.println("Test 4: 16 MicroSteps...");
     stepper.setMicrostep(16);
@@ -297,20 +335,23 @@ void loop() {
     Serial.println("Test 4: Complete");
     Serial.println();
 
+    strip.setPixelColor(0, MAGENTA);
+    strip.show();
     delay(100);
+    strip.setPixelColor(0, BLUE);
+    strip.show();
 
     // 5 check states for above modes
     // 6 check states again
     // 7 disable, check states, try step
 
     if(flagPass){
-    strip.setPixelColor(0, GREEN);
-    strip.show();
-  }else{
-    strip.setPixelColor(0, RED);
-    strip.show();
-    delay(1000);
-  }
+      strip.setPixelColor(0, GREEN);
+      strip.show();
+    }else{
+      strip.setPixelColor(0, RED);
+      strip.show();
+    }
     Serial.println("Tests Complete! ");
     Serial.println("*********************************************");
     Serial.println("*********************************************");
@@ -321,6 +362,7 @@ void loop() {
     stepper.disable();
     Serial.read();
     Serial.flush();
+    delay(10000);
 
 }
 
