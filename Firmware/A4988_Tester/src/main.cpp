@@ -71,6 +71,15 @@
 //   NEO_GRB     Pixels are wired for GRB bitstream (most NeoPixel products)
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, PIN, NEO_GRB + NEO_KHZ800);
+// Color definitions
+#define	BLACK           0x0000
+#define	BLUE            0x001F
+#define	RED             0xF800
+#define	GREEN           0x07E0
+#define CYAN            0x07FF
+#define MAGENTA         0xF81F
+#define YELLOW          0xFFE0
+#define WHITE           0xFFFF
 
 /*****************************************************************************/
 // Global Vars
@@ -109,7 +118,8 @@ void setup() {
     strip.setPixelColor(0, 0, 0, 255);
     strip.show();
     delay(100);
-    strip.setPixelColor(0, 64, 0, 0);
+    strip.setBrightness(64);
+    strip.setPixelColor(0, YELLOW);
     strip.show();
 
     // setup serial port
@@ -128,12 +138,18 @@ void setup() {
 }
 
 void loop() {
+    bool flagPass = true ; // innocent until proven guilty!
+
+    strip.setPixelColor(0, MAGENTA);
+    strip.show();
     Serial.println("Ready for Testing!");
     Serial.println("Press button or send 's' to start test...");
 
     while((digitalRead(btn1)) && (Serial.available() == 0)){
       // do nothing / twiddle thumbs!
     }
+    strip.setPixelColor(0, BLUE);
+    strip.show();
 
     // Tests that we want to run:
     // 1 disable driver and check outputs low
@@ -145,6 +161,7 @@ void loop() {
     printDriverOStates();
 
     if(s1A || s1B || s2A || s2B){// one of the states is high, we have a problem!
+      flagPass = false;
       Serial.println("Error! All states should be low");
       Serial.println("Likely we have a faulty output stage, or wiring");
       Serial.println();
@@ -276,6 +293,14 @@ void loop() {
     // 6 check states again
     // 7 disable, check states, try step
 
+    if(flagPass){
+    strip.setPixelColor(0, GREEN);
+    strip.show();
+  }else{
+    strip.setPixelColor(0, RED);
+    strip.show();
+    delay(1000);
+  }
     Serial.println("Tests Complete! ");
     Serial.println("*********************************************");
     Serial.println("*********************************************");
