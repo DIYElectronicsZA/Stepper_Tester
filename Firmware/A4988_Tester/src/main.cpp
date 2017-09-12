@@ -59,8 +59,11 @@
 // Global Vars
 int   s1A;
 int   s1B;
+int   s1;
 int   s2A;
 int   s2B;
+int   s2;
+int   encbyte;
 
 int   i = 0;
 
@@ -118,23 +121,33 @@ void loop() {
     stepper.enable();
     delay(10); // wait a bit for outputs to settle
 
+    delay(1000);
     checkDriverOutputs(); //0
     printDriverOStates();
 
     stepper.move(1);
+    delay(1000);
     checkDriverOutputs(); //1
     printDriverOStates();
 
     stepper.move(1);
+    delay(1000);
     checkDriverOutputs(); //2
     printDriverOStates();
 
     stepper.move(1);
+    delay(1000);
     checkDriverOutputs(); //3
     printDriverOStates();
 
     stepper.move(1);
+    delay(1000);
     checkDriverOutputs(); //0
+    printDriverOStates();
+
+    stepper.move(1);
+    delay(1000);
+    checkDriverOutputs(); //1
     printDriverOStates();
 
     Serial.println("Test 2: Now checking reverse");
@@ -153,6 +166,14 @@ void loop() {
 
     stepper.move(-1);
     checkDriverOutputs(); //0
+    printDriverOStates();
+
+    stepper.move(-1);
+    checkDriverOutputs(); //3
+    printDriverOStates();
+
+    stepper.move(-1);
+    checkDriverOutputs(); //2
     printDriverOStates();
 
     //TODO: Build driver state truth table
@@ -227,13 +248,18 @@ void checkDriverOutputs(){
   s1B = digitalRead(pin1B);
   s2A = digitalRead(pin2A);
   s2B = digitalRead(pin2B);
+
+  // calc states?
+  s1  = s1A - s1B;
+  s2  = s2A - s2B;
+  encbyte = (s1A << 3) | (s1B << 2) | (s2A << 1) | (s2B);
 }
 
 // function to print states of stepper outputs
 void printDriverOStates(){
   char buffer [50];
   Serial.print("Driver Output States: ");
-  i=sprintf (buffer, "1A:%d 1B:%d | 2A:%d 2B:%d", s1A,s1B,s2A,s2B);
+  i=sprintf (buffer, "2B:2A|1A:1B = %d%d%d%d  | %d | %d %d", s2B,s2A,s1A,s1B,encbyte,s1,s2);
   for(int l= 0; l<=i; l++)
   Serial.print(buffer[l]);
   Serial.println();
